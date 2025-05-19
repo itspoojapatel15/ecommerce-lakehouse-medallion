@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ecommerce_source
+      POSTGRES_USER: cdc_reader
+      POSTGRES_PASSWORD: cdc_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"  # Enable logical replication for CDC
+
+volumes:
+  pgdata:
