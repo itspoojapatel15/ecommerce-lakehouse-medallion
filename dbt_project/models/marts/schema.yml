@@ -1,0 +1,43 @@
+version: 2
+models:
+  - name: dim_customers
+    description: Customer dimension with lifetime value and activity status
+    columns:
+      - name: customer_id
+        tests: [not_null, unique]
+      - name: value_segment
+        tests:
+          - accepted_values:
+              values: ['high_value', 'medium_value', 'low_value', 'no_purchases']
+
+  - name: dim_products
+    description: Product dimension with sales aggregates
+    columns:
+      - name: product_id
+        tests: [not_null, unique]
+
+  - name: fct_orders
+    description: Order fact table
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+      - name: total_amount
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+
+  - name: fct_daily_revenue
+    description: Daily revenue aggregation
+    columns:
+      - name: order_date
+        tests: [not_null, unique]
+
+  - name: fct_customer_rfm
+    description: RFM segmentation for customer analytics
+    columns:
+      - name: customer_id
+        tests: [not_null, unique]
+      - name: rfm_segment
+        tests:
+          - accepted_values:
+              values: ['champion', 'loyal', 'new_customer', 'at_risk', 'lost', 'regular']
